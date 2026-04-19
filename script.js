@@ -1,5 +1,6 @@
+// Validasi List ID Anime (60+ Judul)
 const animeIds = [
-     38790, // Bofuri
+    38790, // Bofuri
     41514, // Bofuri S2
     53446, // Tondemo Skill de Isekai Hourou Meshi
     57025, // Tondemo skill de isekai hourou meshi S2
@@ -76,22 +77,25 @@ const closeBtn = document.querySelector('.close');
 const detailKonten = document.getElementById('detail-konten');
 
 async function fetchSemuaAnime() {
-    listContainer.innerHTML = "<p style='text-align:center; grid-column: 1/-1;'>Menyusun Watchlist kamu...</p>";
+    listContainer.innerHTML = "<p style='text-align:center; grid-column: 1/-1; color: var(--crimson);'>Membuat Watchlist premium...</p>";
+    const dataAnimes = [];
     
+    // Ambil data satu-satu (biar tidak error rate limit API Jikan)
     for (const id of animeIds) {
         try {
             const response = await fetch(`https://api.jikan.moe/v4/anime/${id}`);
             const json = await response.json();
             
-            if (json.data) {
-                if (listContainer.querySelector('p')) listContainer.innerHTML = "";
-                renderCard(json.data);
-            }
-            await new Promise(res => setTimeout(res, 350)); 
+            if(json.data) dataAnimes.push(json.data);
+            await new Promise(res => setTimeout(res, 350)); // Jeda 350ms wajib
         } catch (err) {
-            console.error("Gagal ambil data ID: " + id);
+            console.error("Gagal ambil ID: " + id);
         }
     }
+    
+    listContainer.innerHTML = ""; // Bersihkan loading
+    // Render semua kartu anime setelah data terkumpul
+    dataAnimes.forEach(anime => renderCard(anime));
 }
 
 function renderCard(anime) {
@@ -128,7 +132,7 @@ function bukaDetail(anime) {
             </div>
         </div>
         <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin: 20px 0;">
-        <h3 style="color: #e94560;">Prolog</h3>
+        <h3 style="color: var(--crimson);">Prolog</h3>
         <p style="font-size: 0.95rem; line-height: 1.6; opacity: 0.9;">${anime.synopsis || 'Sinopsis belum tersedia.'}</p>
     `;
     modal.style.display = "block";
