@@ -1,46 +1,46 @@
 const animeIds = [
-    38790, // Bofuri
+     38790, // Bofuri
     41514, // Bofuri S2
-    53446, // Tondemo Skill de Isekai
-    57025, // Tondemo Skill S2
+    53446, // Tondemo Skill de Isekai Hourou Meshi
+    57025, // Tondemo skill de isekai hourou meshi S2
     54714, // Hyakkano (100 Girlfriends)
-    57616, // Hyakkano S2
+    57616, // Hyakkano (100 Girlfriends) S2
     42923, // Sk8 the Infinity
-    49363, // Sk8 (Project/OVA)
+    49363,
     57719, // Akuyaku Reijou Tensei Ojisan
-    58172, // Nageki no Bourei S1
-    60619, // Nageki no Bourei S2
-    53516, // Tensei shitara Dainana Ouji S1
-    59095, // Tensei shitara Dainana Ouji S2
+    58172, // Nageki no Bourei wa Intai Shitai
+    60619, // Nageki no Bourei wa Intai Shitai
+    53516, // Tensei shitara Dainana Ouji
+    59095,
     40397, // Maoujou de Oyasumi
     40750, // Kaifuku Jutsushi no Yarinaoshi
     48239, // Leadale no Daichi nite
-    48316, // Kage no Jitsuryokusha S1
-    54595, // Kage no Jitsuryokusha S2
-    57584, // Kage no Jitsuryokusha Movie
-    39196, // Mairimashita! Iruma-kun S1
-    41402, // Iruma-kun S2
-    49784, // Iruma-kun S3
-    60310, // Iruma-kun S4
+    48316, //Kage_no_Jitsuryokusha_ni_Naritakute
+    54595,
+    57584, // Kage_no_Jitsuryokusha_ni_Naritakute_Movie__Zankyou-hen
+    39196, // Mairimashita! Iruma-kun
+    41402,
+    49784,
+    60310,
     19815, // No Game No Life
-    54900, // Wind Breaker S1
-    59160, // Wind Breaker S2
-    38555, // Hametsu Flag (Bakarina) S1
-    42282, // Bakarina S2
+    54900, // Wind Breaker
+    59160,
+    38555, // Bakarina (Hametsu Flag)
+    42282,
     57891, // Hitoribocchi no Isekai Kouryaku
-    51462, // Isekai Nonbiri Nouka S1
-    62146, // Isekai Nonbiri Nouka S2
-    35790, // Tate no Yuusha S1
-    40356, // Tate no Yuusha S2
-    40357, // Tate no Yuusha S3
-    57907, // Tate no Yuusha S4
-    59130, // Isekai Mokushiroku Mynoghra
-    50220, // Isekai Shoukan wa Nidome desu
-    18507, // Free!
+    51462, // Isekai Nonbiri Nouka
+    62146,
+    35790, // Tate no Yuusha no Nariagari
+    40356,
+    40357,
+    57907,
+    59130, //IsekaiMokushirokuMynoghra
+    50220, //Isekai_Shoukan_wa_Nidome_desu
+    18507, //Free
     50273, // Tomodachi Game
     54837, // Akuyaku Reijou Level 99
     53438, // Higeki no Genkyou S1
-    61931, // Higeki no Genkyou S2
+    61931, // Higeki no Genkyou S2 (Update)
     50461, // Otome Game Isekai (Mobsekai)
     60154, // Ore Wa Seikan Kokka
     58714, // Saikyou no Shienshoku
@@ -56,7 +56,7 @@ const animeIds = [
     43523, // Tsuki ga Michibiku S1
     49889, // Tsuki ga Michibiku S2
     56923, // Lv2 Kara Cheat S1
-    59424, // Lv2 Kara Cheat S2
+    59424, // Lv2 Kara Cheat S2 (Update)
     60810, // Majutsushi Kunon
     60071, // A Gentle Noble's Vacation
     61549, // Okiraku Ryouchi
