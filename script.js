@@ -75,40 +75,46 @@ const listContainer = document.getElementById('anime-list');
 const modal = document.getElementById('modal');
 const closeBtn = document.querySelector('.close');
 const detailKonten = document.getElementById('detail-konten');
+const fabMain = document.getElementById('fab-main');
+const fabMenu = document.getElementById('fab-menu');
 
+let allAnimeData = []; // Untuk simpan data filter
+
+// Fungsi Utama: Ambil Data dari API
 async function fetchSemuaAnime() {
-    listContainer.innerHTML = "<p style='text-align:center; grid-column: 1/-1; color: var(--crimson);'>Membuat Watchlist premium...</p>";
-    const dataAnimes = [];
+    listContainer.innerHTML = "<p style='text-align:center; grid-column: 1/-1; color: var(--crimson);'>Syncing Archives...</p>";
     
-    // Ambil data satu-satu (biar tidak error rate limit API Jikan)
     for (const id of animeIds) {
         try {
             const response = await fetch(`https://api.jikan.moe/v4/anime/${id}`);
             const json = await response.json();
             
-            if(json.data) dataAnimes.push(json.data);
-            await new Promise(res => setTimeout(res, 350)); // Jeda 350ms wajib
+            if(json.data) {
+                allAnimeData.push(json.data); 
+                if (listContainer.querySelector('p')) listContainer.innerHTML = "";
+                renderCard(json.data);
+            }
+            // Jeda agar tidak kena Rate Limit API
+            await new Promise(res => setTimeout(res, 350)); 
         } catch (err) {
             console.error("Gagal ambil ID: " + id);
         }
     }
-    
-    listContainer.innerHTML = ""; // Bersihkan loading
-    // Render semua kartu anime setelah data terkumpul
-    dataAnimes.forEach(anime => renderCard(anime));
 }
 
+// Render Kartu ke HTML
 function renderCard(anime) {
     const card = document.createElement('div');
     card.className = 'card';
     card.innerHTML = `
-        <img src="${anime.images.jpg.large_image_url}" alt="${anime.title}">
+        <img src="${anime.images.jpg.large_image_url}" alt="${anime.title}" loading="lazy">
         <h3>${anime.title}</h3>
     `;
     card.onclick = () => bukaDetail(anime);
     listContainer.appendChild(card);
 }
 
+// Logika Detail Pop-up
 function bukaDetail(anime) {
     const season = anime.season ? anime.season.toUpperCase() : 'N/A';
     const year = anime.year ? anime.year : '';
@@ -120,10 +126,7 @@ function bukaDetail(anime) {
             <img src="${anime.images.jpg.large_image_url}">
             <div class="info-text">
                 <h2>${anime.title}</h2>
-                <p>
-                    <span class="tag">${anime.status}</span> 
-                    <span class="tag">${season} ${year}</span>
-                </p>
+                <p><span class="tag">${anime.status}</span> <span class="tag">${season} ${year}</span></p>
                 <div style="margin-top:15px; font-size: 0.9rem; line-height: 1.6;">
                     <p><strong>Studio:</strong> ${studios}</p>
                     <p><strong>Format:</strong> ${anime.type} (${episodes} Eps)</p>
@@ -133,12 +136,31 @@ function bukaDetail(anime) {
         </div>
         <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin: 20px 0;">
         <h3 style="color: var(--crimson);">Prolog</h3>
-        <p style="font-size: 0.95rem; line-height: 1.6; opacity: 0.9;">${anime.synopsis || 'Sinopsis belum tersedia.'}</p>
+        <p style="line-height: 1.6; opacity: 0.9;">${anime.synopsis || 'Sinopsis belum tersedia.'}</p>
     `;
     modal.style.display = "block";
 }
 
+// Kontrol Filter & Balon
+fabMain.onclick = () => fabMenu.classList.toggle('active');
+
+function filterAnime(season) {
+    listContainer.innerHTML = "";
+    const filtered = season === 'all' 
+        ? allAnimeData 
+        : allAnimeData.filter(a => a.season && a.season.toLowerCase() === season);
+
+    if(filtered.length === 0) {
+        listContainer.innerHTML = `<p style='grid-column:1/-1; text-align:center; opacity:0.5;'>Tidak ada anime di season ${season}.</p>`;
+    } else {
+        filtered.forEach(anime => renderCard(anime));
+    }
+    fabMenu.classList.remove('active');
+}
+
+// Tutup Modal
 closeBtn.onclick = () => modal.style.display = "none";
 window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; }
 
+// Jalankan!
 fetchSemuaAnime();

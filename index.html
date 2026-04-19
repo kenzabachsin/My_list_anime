@@ -17,6 +17,18 @@
         </div>
     </div>
 </header>
+<div class="floating-container">
+    <button class="fab" id="fab-main">
+        <span>🎬</span>
+    </button>
+    <div class="fab-menu" id="fab-menu">
+        <button class="menu-item" onclick="filterAnime('all')">ALL</button>
+        <button class="menu-item" onclick="filterAnime('winter')">WINTER</button>
+        <button class="menu-item" onclick="filterAnime('spring')">SPRING</button>
+        <button class="menu-item" onclick="filterAnime('summer')">SUMMER</button>
+        <button class="menu-item" onclick="filterAnime('fall')">FALL</button>
+    </div>
+</div>
     <main id="anime-list" class="container"></main>
 
     <div id="modal" class="modal">
