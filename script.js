@@ -77,12 +77,15 @@ const closeBtn = document.querySelector('.close');
 const detailKonten = document.getElementById('detail-konten');
 const fabMain = document.getElementById('fab-main');
 const fabMenu = document.getElementById('fab-menu');
+const subMenuJadwal = document.getElementById('sub-menu-jadwal');
 
-let allAnimeData = []; // Untuk simpan data filter
+let allAnimeData = []; // Untuk menyimpan semua data hasil fetch
 
-// Fungsi Utama: Ambil Data dari API
+/**
+ * 1. FUNGSI AMBIL DATA API
+ */
 async function fetchSemuaAnime() {
-    listContainer.innerHTML = "<p style='text-align:center; grid-column: 1/-1; color: var(--crimson);'>Syncing Archives...</p>";
+    listContainer.innerHTML = "<p style='text-align:center; grid-column: 1/-1; color: var(--crimson);'>Mengkoneksikan ke Archive...</p>";
     
     for (const id of animeIds) {
         try {
@@ -94,7 +97,7 @@ async function fetchSemuaAnime() {
                 if (listContainer.querySelector('p')) listContainer.innerHTML = "";
                 renderCard(json.data);
             }
-            // Jeda agar tidak kena Rate Limit API
+            // Jeda 350ms wajib agar tidak diblokir API
             await new Promise(res => setTimeout(res, 350)); 
         } catch (err) {
             console.error("Gagal ambil ID: " + id);
@@ -102,7 +105,9 @@ async function fetchSemuaAnime() {
     }
 }
 
-// Render Kartu ke HTML
+/**
+ * 2. FUNGSI RENDER KARTU
+ */
 function renderCard(anime) {
     const card = document.createElement('div');
     card.className = 'card';
@@ -114,7 +119,9 @@ function renderCard(anime) {
     listContainer.appendChild(card);
 }
 
-// Logika Detail Pop-up
+/**
+ * 3. FUNGSI DETAIL MODAL
+ */
 function bukaDetail(anime) {
     const season = anime.season ? anime.season.toUpperCase() : 'N/A';
     const year = anime.year ? anime.year : '';
@@ -141,26 +148,47 @@ function bukaDetail(anime) {
     modal.style.display = "block";
 }
 
-// Kontrol Filter & Balon
-fabMain.onclick = () => fabMenu.classList.toggle('active');
+/**
+ * 4. LOGIKA BALON & JADWAL
+ */
+// Buka/Tutup Menu Utama
+fabMain.onclick = () => {
+    fabMenu.classList.toggle('active');
+    // Jika menu utama tutup, sub-menu jadwal juga harus tutup
+    if(!fabMenu.classList.contains('active')) {
+        subMenuJadwal.classList.remove('active');
+    }
+};
 
+// Buka/Tutup Sub-Menu Jadwal (Januari - Desember)
+function toggleSubMenu() {
+    subMenuJadwal.classList.toggle('active');
+}
+
+// Fungsi Filter Anime
 function filterAnime(season) {
     listContainer.innerHTML = "";
+    
     const filtered = season === 'all' 
         ? allAnimeData 
         : allAnimeData.filter(a => a.season && a.season.toLowerCase() === season);
 
     if(filtered.length === 0) {
-        listContainer.innerHTML = `<p style='grid-column:1/-1; text-align:center; opacity:0.5;'>Tidak ada anime di season ${season}.</p>`;
+        listContainer.innerHTML = `<p style='grid-column:1/-1; text-align:center; opacity:0.5; padding: 50px;'>Tidak ada anime di musim ${season.toUpperCase()}.</p>`;
     } else {
         filtered.forEach(anime => renderCard(anime));
     }
+    
+    // Tutup semua menu setelah memilih
     fabMenu.classList.remove('active');
+    subMenuJadwal.classList.remove('active');
 }
 
-// Tutup Modal
+/**
+ * 5. KONTROL MODAL & INISIALISASI
+ */
 closeBtn.onclick = () => modal.style.display = "none";
 window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; }
 
-// Jalankan!
+// Jalankan pengambilan data saat web dibuka
 fetchSemuaAnime();

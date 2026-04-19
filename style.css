@@ -298,25 +298,55 @@ main.container {
 .fab-menu.active { display: flex; }
 
 .menu-item {
-    background: var(--glass);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--crimson);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(233, 69, 96, 0.3);
     color: white;
-    padding: 10px 20px;
-    border-radius: 25px;
+    padding: 12px 20px;
+    border-radius: 30px;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
-    transition: 0.3s;
+    transition: all 0.3s ease;
     white-space: nowrap;
+    text-align: right;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .menu-item:hover {
-    background: var(--crimson);
-    box-shadow: 0 0 15px var(--crimson);
+    background: #e94560;
+    border-color: #e94560;
+    transform: translateX(-15px); /* Efek balon bergeser ke kiri */
+    box-shadow: 0 0 20px rgba(233, 69, 96, 0.6);
 }
 
-@keyframes bounceIn {
-    from { opacity: 0; transform: translateY(20px) scale(0.5); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+/* Style untuk Sub-Menu Jadwal */
+.sub-menu {
+    display: none; /* Awalnya sembunyi */
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding-right: 10px;
+    border-right: 2px solid var(--crimson);
+}
+
+.sub-menu.active {
+    display: flex;
+    animation: slideInRight 0.3s ease;
+}
+
+.menu-item.sub {
+    font-size: 0.7rem;
+    background: rgba(233, 69, 96, 0.15);
+    padding: 8px 15px;
+}
+
+.trigger-jadwal {
+    background: var(--crimson) !important;
+    font-weight: 700 !important;
+}
+
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
 }

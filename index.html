@@ -18,15 +18,19 @@
     </div>
 </header>
 <div class="floating-container">
-    <button class="fab" id="fab-main">
-        <span>🎬</span>
-    </button>
+    <button class="fab" id="fab-main"><span>🎬</span></button>
+    
     <div class="fab-menu" id="fab-menu">
-        <button class="menu-item" onclick="filterAnime('all')">SEMUA MUSIM</button>
-        <button class="menu-item" onclick="filterAnime('winter')">WINTER (Januari - Maret)</button>
-        <button class="menu-item" onclick="filterAnime('spring')">SPRING (April - Juni)</button>
-        <button class="menu-item" onclick="filterAnime('summer')">SUMMER (Juli - September)</button>
-        <button class="menu-item" onclick="filterAnime('fall')">FALL (Oktober - Desember)</button>
+        <button class="menu-item trigger-jadwal" onclick="toggleSubMenu()">📅 JADWAL MUSIM</button>
+        
+        <div id="sub-menu-jadwal" class="sub-menu">
+            <button class="menu-item sub" onclick="filterAnime('winter')">WINTER (Januari - Maret)</button>
+            <button class="menu-item sub" onclick="filterAnime('spring')">SPRING (April - Juni)</button>
+            <button class="menu-item sub" onclick="filterAnime('summer')">SUMMER (Juli - September)</button>
+            <button class="menu-item sub" onclick="filterAnime('fall')">FALL (Oktober - Desember)</button>
+        </div>
+
+        <button class="menu-item" onclick="filterAnime('all')">👁️ LIHAT SEMUA</button>
     </div>
 </div>
     <main id="anime-list" class="container"></main>
