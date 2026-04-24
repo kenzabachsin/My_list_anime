@@ -71,25 +71,6 @@ const animeIds = [
     40902  // Shokugeki no Souma S5
 ];
 
-Wah, ini fiturnya makin canggih ya! Kamu mau bikin sistem Auto-Sorting yang bisa mendeteksi update terbaru sekaligus Grouping (Folder) otomatis biar daftar animenya rapi berdasarkan judulnya.
-
-Karena Jikan API tidak memberikan data "kapan kamu menambahkan ID ini" secara otomatis, kita bakal pakai logika ID Baru untuk fitur "Pindah ke Atas" selama 24 jam. Setelah itu, kodenya akan mengelompokkan anime dengan judul yang sama ke dalam satu "Folder" dan mengurutkannya dari A-Z.
-
-1. Update script.js (Logika Folder & Auto-Sort)
-Ganti seluruh isi script.js kamu dengan kode sakti ini. Saya sudah tambahkan fitur deteksi musim/season otomatis dari judul agar bisa masuk ke folder yang benar.
-
-JavaScript
-// Database ID Anime Kamu
-const animeIds = [
-    38790, 41514, 53446, 57025, 54714, 57616, 42923, 49363, 57719, 58172,
-    60619, 53516, 59095, 40397, 40750, 48239, 48316, 54595, 57584, 39196,
-    41402, 49784, 60310, 19815, 54900, 59160, 38555, 42282, 57891, 51462,
-    62146, 35790, 40356, 40357, 57907, 59130, 50220, 18507, 50273, 54837,
-    53438, 61931, 50461, 60154, 58714, 52305, 58913, 57533, 61174, 59205,
-    52962, 60303, 58939, 60285, 43523, 49889, 56923, 59424, 60810, 60071,
-    61549, 41710, 49930, 58146, 28171, 32282, 35788, 39940, 40902
-];
-
 const listContainer = document.getElementById('anime-list');
 let rawAnimeData = [];
 
