@@ -72,81 +72,156 @@ const animeIds = [
 ];
 
 const listContainer = document.getElementById('anime-list');
-let rawAnimeData = [];
+const modal = document.getElementById('modal');
+const closeBtn = document.querySelector('.close');
+const detailKonten = document.getElementById('detail-konten');
+const fabMain = document.getElementById('fab-main');
+const fabMenu = document.getElementById('fab-menu');
+const subMenuJadwal = document.getElementById('sub-menu-jadwal');
 
-async function fetchAndOrganize() {
-    listContainer.innerHTML = "<p style='text-align:center; grid-column: 1/-1;'>Organizing Folders...</p>";
+let rawAnimeData = []; // Tempat simpan data asli dari API
+
+/**
+ * 1. FUNGSI AMBIL DATA (FETCH)
+ */
+async function fetchSemuaAnime() {
+    listContainer.innerHTML = "<p style='text-align:center; grid-column: 1/-1; color: #e94560;'>Membangun Folder Database...</p>";
     
-    // 1. Ambil semua data
     for (const id of animeIds) {
         try {
-            const res = await fetch(`https://api.jikan.moe/v4/anime/${id}`);
-            const json = await res.json();
+            const response = await fetch(`https://api.jikan.moe/v4/anime/${id}`);
+            const json = await response.json();
+            
             if (json.data) {
-                // Tandai jika ada "Update" di komentar atau ID baru
-                json.data.isNewUpdate = id === 61931 || id === 59424; // Contoh ID yang kamu labeli Update
+                // Logika Update: Jika ID adalah ID tertentu (misal ID baru), tandai sebagai Update
+                // Di sini kita contohkan ID 61931 dan 59424 sebagai update baru
+                json.data.isNewUpdate = (id === 61931 || id === 59424); 
                 rawAnimeData.push(json.data);
             }
-            await new Promise(r => setTimeout(r, 350));
-        } catch (e) { console.error(e); }
+            // Delay 350ms agar tidak kena limit API
+            await new Promise(res => setTimeout(res, 350)); 
+        } catch (err) {
+            console.error("Error ID " + id + ":", err);
+        }
     }
-
     renderFolderedList();
 }
 
-function renderFolderedList() {
+/**
+ * 2. FUNGSI PENGELOMPOKKAN FOLDER & RENDER
+ */
+function renderFolderedList(filterSeason = 'all') {
     listContainer.innerHTML = "";
-    
-    // 2. Grouping berdasarkan Nama Dasar (Hapus S1, S2, dsb)
     const folders = {};
-    rawAnimeData.forEach(anime => {
-        // Logika hapus "Season", "S1", "Part" dll untuk nama folder
-        const folderName = anime.title.split(/ (Season|S\d|Part|ova)/i)[0].trim();
-        if (!folders[folderName]) folders[folderName] = { data: [], hasUpdate: false };
+
+    // Filter berdasarkan musim jika dipilih lewat balon
+    const filteredData = filterSeason === 'all' 
+        ? rawAnimeData 
+        : rawAnimeData.filter(a => a.season && a.season.toLowerCase() === filterSeason);
+
+    // Grouping: Menggabungkan season ke dalam satu nama folder
+    filteredData.forEach(anime => {
+        let folderName = anime.title
+            .replace(/ (Season|S\d|Part|ova|Movie|2nd|3rd|4th|5th|I|II|III|IV|V).*/i, "")
+            .replace(/[:]/g, "")
+            .trim();
+
+        if (!folders[folderName]) {
+            folders[folderName] = { data: [], hasUpdate: false };
+        }
         folders[folderName].data.push(anime);
         if (anime.isNewUpdate) folders[folderName].hasUpdate = true;
     });
 
-    // 3. Sorting: Update di atas, sisanya Abjad A-Z
+    // Sorting: Update paling atas, sisanya urut Abjad A-Z
     const sortedFolderNames = Object.keys(folders).sort((a, b) => {
         if (folders[a].hasUpdate && !folders[b].hasUpdate) return -1;
         if (!folders[a].hasUpdate && folders[b].hasUpdate) return 1;
         return a.localeCompare(b);
     });
 
-    // 4. Render ke HTML
+    // Gambar Folder ke layar
     sortedFolderNames.forEach(name => {
         const folder = folders[name];
         const mainImg = folder.data[0].images.jpg.large_image_url;
-        const availableSeasons = folder.data.map(a => {
-            if (a.title.includes("S2")) return "S2";
-            if (a.title.includes("S3")) return "S3";
-            if (a.title.includes("S4")) return "S4";
-            if (a.title.includes("S5")) return "S5";
+        
+        // Cek Season yang tersedia
+        const seasonLabels = folder.data.map(a => {
+            const t = a.title.toLowerCase();
+            if (t.includes("s2") || t.includes("2nd") || t.includes("ii")) return "S2";
+            if (t.includes("s3") || t.includes("3rd") || t.includes("iii")) return "S3";
+            if (t.includes("s4") || t.includes("4th") || t.includes("iv")) return "S4";
+            if (t.includes("s5") || t.includes("5th") || t.includes("v")) return "S5";
+            if (t.includes("ova")) return "OVA";
             return "S1";
-        }).join(", ");
+        });
+        const uniqueSeasons = [...new Set(seasonLabels)].sort();
 
         const card = document.createElement('div');
         card.className = `card ${folder.hasUpdate ? 'border-update' : ''}`;
         card.innerHTML = `
-            <div class="folder-tag">${folder.hasUpdate ? 'HOT UPDATE' : 'FOLDER'}</div>
-            <img src="${mainImg}">
+            <div class="folder-tag">${folder.hasUpdate ? '🔥 HOT UPDATE' : '📁 FOLDER'}</div>
+            <img src="${mainImg}" loading="lazy">
             <div class="card-info">
                 <h3>${name}</h3>
-                <small>Tersedia: ${availableSeasons}</small>
+                <small>Tersedia: ${uniqueSeasons.join(", ")}</small>
             </div>
         `;
-        // Saat diklik, munculkan modal dengan list season di dalamnya
         card.onclick = () => showFolderDetail(name, folder.data);
         listContainer.appendChild(card);
     });
 }
 
-function showFolderDetail(title, seasons) {
-    // Fungsi ini bisa kamu modif untuk nampilin isi folder di modal
-    const content = seasons.map(s => `<div class="season-item">▶ ${s.title}</div>`).join("");
-    document.getElementById('detail-konten').innerHTML = `<h2>${title}</h2><br>${content}`;
-    document.getElementById('modal').style.display = "block";
+/**
+ * 3. LOGIKA DETAIL FOLDER (MODAL)
+ */
+function showFolderDetail(folderName, seasons) {
+    let content = `<h2 style="color: #e94560; margin-bottom: 20px;">${folderName}</h2>`;
+    
+    seasons.forEach(s => {
+        content += `
+            <div class="season-item" onclick="bukaSpesifik('${s.mal_id}')">
+                <div style="display:flex; gap: 15px; align-items:center;">
+                    <img src="${s.images.jpg.small_image_url}" style="width:50px; border-radius:5px;">
+                    <div>
+                        <strong style="display:block;">${s.title}</strong>
+                        <span style="font-size:0.8rem; opacity:0.7;">Score: ⭐ ${s.score || 'N/A'} | Status: ${s.status}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    detailKonten.innerHTML = content;
+    modal.style.display = "block";
 }
 
-fetchAndOrganize();
+// Fungsi dummy untuk klik di dalam folder (bisa dikembangkan untuk buka sinopsis)
+window.bukaSpesifik = function(id) {
+    window.open(`https://myanimelist.net/anime/${id}`, '_blank');
+}
+
+/**
+ * 4. KONTROL BALON & FILTER
+ */
+fabMain.onclick = () => {
+    fabMenu.classList.toggle('active');
+    if (!fabMenu.classList.contains('active')) subMenuJadwal.classList.remove('active');
+};
+
+window.toggleSubMenu = function() {
+    subMenuJadwal.classList.toggle('active');
+}
+
+window.filterAnime = function(season) {
+    renderFolderedList(season);
+    fabMenu.classList.remove('active');
+    subMenuJadwal.classList.remove('active');
+}
+
+// Tutup Modal
+closeBtn.onclick = () => modal.style.display = "none";
+window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; }
+
+// Jalankan Program
+fetchSemuaAnime();
